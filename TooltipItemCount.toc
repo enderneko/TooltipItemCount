@@ -1,0 +1,14 @@
+## Interface: 80000
+## Title: Tooltip Item Count
+## Version: r1-release
+## Author: fyhcslb/EnderNeko
+## SavedVariables: TIC_DB
+
+Locales/enUS.lua
+Locales/zhCN.lua
+
+Core.lua
+Bags.lua
+Bank.lua
+Equipped.lua
+Tooltip.lua
