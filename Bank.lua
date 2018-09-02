@@ -25,22 +25,11 @@ local function ScanBankBag(bag)
     end
 end
 
-local function UpdateBankDB()
-    for id, t in pairs(TIC_DB[TIC.realm][TIC.name]["bank"]) do
-        local bank = GetItemCount(id, true) - GetItemCount(id)
-        if t[1] ~= bank then
-            if bank > 0 then
-                t[1] = bank
-            else
-                t = nil
-            end
-        end
-    end
-end
-
-local isBankOpen, timer
+local isBankOpen, updateRequired
 local function ScanBank()
     if isBankOpen then
+        updateRequired = false
+
         wipe(temp)
 
         -- bank bags
@@ -57,11 +46,7 @@ local function ScanBank()
         TIC:Save(temp, "bank")
     else
         -- trade skill
-        if timer then timer:Cancel() end
-        timer = C_Timer.NewTimer(2, function()
-            UpdateBankDB()
-            timer = nil
-        end)
+        updateRequired = true
     end
 end
 
@@ -85,6 +70,32 @@ end
 function TIC:PLAYERREAGENTBANKSLOTS_CHANGED()
     ScanBank()
 end
+
+local function UpdateBankDB()
+    for id, t in pairs(TIC_DB[TIC.realm][TIC.name]["bank"]) do
+        local bank = GetItemCount(id, true) - GetItemCount(id)
+        if t[1] ~= bank then
+            if bank > 0 then
+                t[1] = bank
+            else
+                t = nil
+            end
+        end
+    end
+end
+
+local frame = CreateFrame("Frame")
+frame:RegisterEvent("ADDON_LOADED")
+frame:SetScript("OnEvent", function(self, event, arg1)
+    if arg1 == "Blizzard_TradeSkillUI" then
+        TradeSkillFrame:HookScript("OnHide", function()
+            if updateRequired then
+                updateRequired = false
+                UpdateBankDB()
+            end
+        end)
+    end
+end)
 
 -- update bank count in db when log out -- FIXME: doesn't work
 -- function TIC:PLAYER_LOGOUT()
