@@ -5,6 +5,7 @@ TIC:RegisterEvent("BANKFRAME_CLOSED")
 TIC:RegisterEvent("PLAYERBANKBAGSLOTS_CHANGED")
 TIC:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
 TIC:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
+TIC:RegisterEvent("PLAYER_LOGOUT")
 
 local temp = {}
 local function ScanBankBag(bag)
@@ -63,4 +64,18 @@ end
 
 function TIC:PLAYERREAGENTBANKSLOTS_CHANGED()
     ScanBank()
+end
+
+-- update bank count in db when log out
+function TIC:PLAYER_LOGOUT()
+    for id, t in pairs(TIC_DB[TIC.realm][TIC.name]["bank"]) do
+        local bank = GetItemCount(id, true) - GetItemCount(id)
+        if t[1] ~= bank then
+            if bank > 0 then
+                t[1] = bank
+            else
+                wipe(t)
+            end
+        end
+    end
 end

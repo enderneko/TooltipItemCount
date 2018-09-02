@@ -4,8 +4,9 @@ local function GameTooltip_OnTooltipSetItem(tt)
     if not tt.counted then
         local _, link = tt:GetItem()
         if not link then return end
-
         local id = GetItemInfoInstant(link)
+        if not id then return end        
+
         local result = TIC:Count(id)
         for _, t in pairs(result) do
             tt:AddDoubleLine(t[1], t[2])

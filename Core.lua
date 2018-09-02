@@ -89,17 +89,76 @@ local function CountOnCharacter(name, id)
     end
 end
 
+local function CountOnCurrentCharacter(id)
+    local equipped = 0, 0, 0
+    local bags = GetItemCount(id)
+    local bank = GetItemCount(id, true) - bags
+    local result = {}
+
+    -- equipped
+    if TIC_DB[TIC.realm][TIC.name]["equipped"][id] then
+        bank = TIC_DB[TIC.realm][TIC.name]["equipped"][id][1]
+        table.insert(result, L["Equipped"] .. ": " .. bank)
+    end
+
+    --bags
+    if bags > 0 then
+        table.insert(result, L["Bags"] .. ": " .. bags)
+    end
+    -- update db bags
+    if TIC_DB[TIC.realm][TIC.name]["bags"][id] then
+        if bags ~= TIC_DB[TIC.realm][TIC.name]["bags"][id][1] then
+            if bags > 0 then
+                TIC_DB[TIC.realm][TIC.name]["bags"][id][1] = bags
+            else
+                wipe(TIC_DB[TIC.realm][TIC.name]["bags"][id])
+            end
+        end
+    end
+
+    -- banks
+    if bank > 0 then
+        table.insert(result, L["Bank"] .. ": " .. bank)
+    end
+    -- update db bank
+    if TIC_DB[TIC.realm][TIC.name]["bank"][id] then
+        if bank ~= TIC_DB[TIC.realm][TIC.name]["bank"][id][1] then
+            if bank > 0 then
+                TIC_DB[TIC.realm][TIC.name]["bank"][id][1] = bank
+            else
+                wipe(TIC_DB[TIC.realm][TIC.name]["bank"][id])
+            end
+        end
+    end
+    
+    if equipped + bags + bank > 0 then
+        local class = TIC_DB[TIC.realm][TIC.name]["class"]
+        local cname = ColorByClass(class, TIC.name)
+        if #result == 1 then
+            return cname, ColorByClass(class, result[1])
+        else
+            return cname, ColorByClass(class, equipped + bags + bank).." |cFFBBBBBB("..table.concat(result, ", ")..")"
+        end
+    end
+end
+
 -- count by id
 function TIC:Count(id)
     local result = {}
     -- search in current realm and same faction
     for name, t in pairs(TIC_DB[TIC.realm]) do
-        if t["faction"] == TIC.faction then
+        -- not current character, just count in db
+        if name ~= TIC.name and t["faction"] == TIC.faction then
             local text1, text2 = CountOnCharacter(name, id)
             if text1 and text2 then
                 table.insert(result, {text1, text2})
             end
         end
+    end
+    -- add current character
+    local text1, text2 = CountOnCurrentCharacter(id)
+    if text1 and text2 then
+        table.insert(result, {text1, text2})
     end
     return result
 end
