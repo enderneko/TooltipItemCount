@@ -64,8 +64,8 @@ local function CountOnCharacter(name, id)
 
     -- equipped
     if TIC_DB[TIC.realm][name]["equipped"][id] then
-        bank = TIC_DB[TIC.realm][name]["equipped"][id][1]
-        table.insert(result, L["Equipped"] .. ": " .. bank)
+        equipped = TIC_DB[TIC.realm][name]["equipped"][id][1]
+        table.insert(result, L["Equipped"] .. ": " .. equipped)
     end
     -- bags
     if TIC_DB[TIC.realm][name]["bags"][id] then
@@ -97,24 +97,26 @@ local function CountOnCurrentCharacter(id)
 
     -- equipped
     if TIC_DB[TIC.realm][TIC.name]["equipped"][id] then
-        bank = TIC_DB[TIC.realm][TIC.name]["equipped"][id][1]
-        table.insert(result, L["Equipped"] .. ": " .. bank)
+        equipped = TIC_DB[TIC.realm][TIC.name]["equipped"][id][1]
+        table.insert(result, L["Equipped"] .. ": " .. equipped)
+
+        bags = bags - 1 -- equipped one
     end
 
     --bags
     if bags > 0 then
         table.insert(result, L["Bags"] .. ": " .. bags)
     end
-    -- update db bags
-    if TIC_DB[TIC.realm][TIC.name]["bags"][id] then
-        if bags ~= TIC_DB[TIC.realm][TIC.name]["bags"][id][1] then
-            if bags > 0 then
-                TIC_DB[TIC.realm][TIC.name]["bags"][id][1] = bags
-            else
-                wipe(TIC_DB[TIC.realm][TIC.name]["bags"][id])
-            end
-        end
-    end
+    -- update db bags -- FIXME: absolutely the same IN THEORY
+    -- if TIC_DB[TIC.realm][TIC.name]["bags"][id] then
+    --     if bags ~= TIC_DB[TIC.realm][TIC.name]["bags"][id][1] then
+    --         if bags > 0 then
+    --             TIC_DB[TIC.realm][TIC.name]["bags"][id][1] = bags
+    --         else
+    --             TIC_DB[TIC.realm][TIC.name]["bags"][id] = nil
+    --         end
+    --     end
+    -- end
 
     -- banks
     if bank > 0 then
@@ -126,7 +128,7 @@ local function CountOnCurrentCharacter(id)
             if bank > 0 then
                 TIC_DB[TIC.realm][TIC.name]["bank"][id][1] = bank
             else
-                wipe(TIC_DB[TIC.realm][TIC.name]["bank"][id])
+                TIC_DB[TIC.realm][TIC.name]["bank"][id] = nil
             end
         end
     end
