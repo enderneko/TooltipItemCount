@@ -100,7 +100,7 @@ local function CountOnCurrentCharacter(id)
         equipped = TIC_DB[TIC.realm][TIC.name]["equipped"][id][1]
         table.insert(result, L["Equipped"] .. ": " .. equipped)
 
-        bags = bags - 1 -- equipped one
+        bags = bags - equipped -- equipped
     end
 
     --bags

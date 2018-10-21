@@ -19,7 +19,7 @@ local function ScanEquipped()
                 temp[itemID][3] = "|T" .. itemIcon .. ":0|t"
                 temp[itemID][4] = itemQuality
             else
-                temp[itemID][1] = temp[itemID][1] + itemCount
+                temp[itemID][1] = temp[itemID][1] + 1
             end
         end
     end
