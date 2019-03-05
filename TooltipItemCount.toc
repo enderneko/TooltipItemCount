@@ -1,4 +1,4 @@
-## Interface: 80000
+## Interface: 80100
 ## Title: Tooltip Item Count
 ## Version: r5-release
 ## Author: fyhcslb/EnderNeko
