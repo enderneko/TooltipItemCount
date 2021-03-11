@@ -7,6 +7,7 @@ TIC:RegisterEvent("PLAYERBANKSLOTS_CHANGED")
 TIC:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
 -- TIC:RegisterEvent("PLAYER_LOGOUT")
 
+local bags = {1, 2, 3, 4, 5, 6, 7}
 local temp = {}
 local function ScanBankBag(bag)
     for slot = 1, GetContainerNumSlots(bag) do
@@ -42,6 +43,22 @@ local function ScanBank()
 
         -- reagent bank
         ScanBankBag(-3)
+
+        -- count bags
+        for _, slot in ipairs(bags) do
+            local icon, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID = GetContainerItemInfo(-4, slot)
+            if itemID then
+                if not temp[itemID] then
+                    temp[itemID] = {}
+                    temp[itemID][1] = itemCount
+                    temp[itemID][2] = string.match(itemLink, "|h%[(.+)%]|h")
+                    temp[itemID][3] = "|T" .. icon .. ":0|t"
+                    temp[itemID][4] = quality
+                else
+                    temp[itemID][1] = temp[itemID][1] + itemCount
+                end
+            end
+        end
 
         TIC:Save(temp, "bank")
     else
