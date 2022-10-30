@@ -1,6 +1,6 @@
-## Interface: 90005
+## Interface: 100000
 ## Title: Tooltip Item Count
-## Version: r6-release
+## Version: r7-release
 ## Author: fyhcslb/EnderNeko
 ## SavedVariables: TIC_DB
 
