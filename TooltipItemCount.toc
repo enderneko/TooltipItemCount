@@ -1,8 +1,10 @@
-## Interface: 100000
+## Interface: 100002
 ## Title: Tooltip Item Count
-## Version: r7-release
-## Author: fyhcslb/EnderNeko
+## Version: r8-release
+## Author: enderneko
 ## SavedVariables: TIC_DB
+
+## X-Curse-Project-ID: 301978
 
 Locales/enUS.lua
 Locales/zhCN.lua

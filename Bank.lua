@@ -10,17 +10,17 @@ TIC:RegisterEvent("PLAYERREAGENTBANKSLOTS_CHANGED")
 local bags = {1, 2, 3, 4, 5, 6, 7}
 local temp = {}
 local function ScanBankBag(bag)
-    for slot = 1, GetContainerNumSlots(bag) do
-        local icon, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID = GetContainerItemInfo(bag, slot)
-        if itemID then
-            if not temp[itemID] then
-                temp[itemID] = {}
-                temp[itemID][1] = itemCount
-                temp[itemID][2] = string.match(itemLink, "|h%[(.+)%]|h")
-                temp[itemID][3] = "|T" .. icon .. ":0|t"
-                temp[itemID][4] = quality
+    for slot = 1, C_Container.GetContainerNumSlots(bag) do
+        local info = C_Container.GetContainerItemInfo(bag, slot)
+        if info and info.itemID and info.stackCount and info.hyperlink and info.iconFileID and info.quality then
+            if not temp[info.itemID] then
+                temp[info.itemID] = {}
+                temp[info.itemID][1] = info.stackCount
+                temp[info.itemID][2] = string.match(info.hyperlink, "|h%[(.+)%]|h")
+                temp[info.itemID][3] = "|T" .. info.iconFileID .. ":0|t"
+                temp[info.itemID][4] = info.quality
             else
-                temp[itemID][1] = temp[itemID][1] + itemCount
+                temp[info.itemID][1] = temp[info.itemID][1] + info.stackCount
             end
         end
     end
@@ -34,7 +34,7 @@ local function ScanBank()
         wipe(temp)
 
         -- bank bags
-        for bag = 5, GetNumBankSlots()+4 do
+        for bag = 6, GetNumBankSlots()+5 do
             ScanBankBag(bag)
         end
 
@@ -46,16 +46,16 @@ local function ScanBank()
 
         -- count bags
         for _, slot in ipairs(bags) do
-            local icon, itemCount, locked, quality, readable, lootable, itemLink, isFiltered, noValue, itemID = GetContainerItemInfo(-4, slot)
-            if itemID then
-                if not temp[itemID] then
-                    temp[itemID] = {}
-                    temp[itemID][1] = itemCount
-                    temp[itemID][2] = string.match(itemLink, "|h%[(.+)%]|h")
-                    temp[itemID][3] = "|T" .. icon .. ":0|t"
-                    temp[itemID][4] = quality
+            local info = C_Container.GetContainerItemInfo(-4, slot)
+            if info and info.itemID and info.hyperlink and info.iconFileID and info.quality then
+                if not temp[info.itemID] then
+                    temp[info.itemID] = {}
+                    temp[info.itemID][1] = 1
+                    temp[info.itemID][2] = string.match(info.hyperlink, "|h%[(.+)%]|h")
+                    temp[info.itemID][3] = "|T" .. info.iconFileID .. ":0|t"
+                    temp[info.itemID][4] = info.quality
                 else
-                    temp[itemID][1] = temp[itemID][1] + itemCount
+                    temp[info.itemID][1] = temp[info.itemID][1] + 1
                 end
             end
         end
@@ -69,23 +69,40 @@ end
 
 function TIC:BANKFRAME_OPENED()
     isBankOpen = true
-    C_Timer.After(.5, ScanBank)
+    C_Timer.After(0.5, ScanBank)
 end
 
 function TIC:BANKFRAME_CLOSED()
     isBankOpen = false
 end
 
+local timer
 function TIC:PLAYERBANKBAGSLOTS_CHANGED()
-    ScanBank()
+    if timer then
+        timer:Cancel()
+    end
+    timer = C_Timer.NewTimer(0.5, ScanBank)
+end
+
+function TIC:BAG_UPDATE_DELAYED2()
+    if timer then
+        timer:Cancel()
+    end
+    timer = C_Timer.NewTimer(0.5, ScanBank)
 end
 
 function TIC:PLAYERBANKSLOTS_CHANGED()
-    ScanBank()
+    if timer then
+        timer:Cancel()
+    end
+    timer = C_Timer.NewTimer(0.5, ScanBank)
 end
 
 function TIC:PLAYERREAGENTBANKSLOTS_CHANGED()
-    ScanBank()
+    if timer then
+        timer:Cancel()
+    end
+    timer = C_Timer.NewTimer(0.5, ScanBank)
 end
 
 local function UpdateBankDB()
