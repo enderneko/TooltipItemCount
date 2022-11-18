@@ -1,6 +1,6 @@
 ## Interface: 100002
 ## Title: Tooltip Item Count
-## Version: r8-release
+## Version: r9-release
 ## Author: enderneko
 ## SavedVariables: TIC_DB
 
@@ -8,6 +8,7 @@
 
 Locales/enUS.lua
 Locales/zhCN.lua
+Locales/koKR.lua
 
 Core.lua
 Bags.lua
