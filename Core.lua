@@ -146,6 +146,8 @@ end
 
 -- count by id
 function TIC:Count(id)
+    if not TIC_DB[TIC.realm] then return end
+    
     local result = {}
     -- search in current realm and same faction
     for name, t in pairs(TIC_DB[TIC.realm]) do
