@@ -11,7 +11,7 @@ local temp = {}
 function TIC:BAG_UPDATE_DELAYED()
     wipe(temp)
     -- count items in bags
-    for bag = 0, 4 do
+    for bag = 0, 5 do
         for slot = 1, C_Container.GetContainerNumSlots(bag) do
             local info = C_Container.GetContainerItemInfo(bag, slot)
             if info and info.itemID and info.stackCount and info.hyperlink and info.iconFileID and info.quality then

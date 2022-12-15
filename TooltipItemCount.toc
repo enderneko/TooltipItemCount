@@ -1,6 +1,6 @@
 ## Interface: 100002
 ## Title: Tooltip Item Count
-## Version: r10-release
+## Version: r11-release
 ## Author: enderneko
 ## SavedVariables: TIC_DB
 
